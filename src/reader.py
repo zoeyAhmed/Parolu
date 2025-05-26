@@ -21,7 +21,7 @@ import numpy as np
 import shutil
 from pathlib import Path
 from .pipervoice import VoiceManager
-from .vocx import convert_text
+from .vocxpo import convert_text
 
 class Reader():
       # Konstruktor, initialisiert Eingabewerte
