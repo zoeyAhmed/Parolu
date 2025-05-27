@@ -72,6 +72,7 @@ python.extension_module(
 subdir('data')
 subdir('po')
 subdir('patches')
+subdir('models')
 
 gnome.post_install(
   glib_compile_schemas: true,
