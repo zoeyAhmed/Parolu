@@ -19,18 +19,37 @@ class VoiceManager:
         lang_dir = os.path.join(self.voices_dir, lang_code)
         voices = []
         print ('Stimmenordner der Sprache  ', lang_dir)
-        if os.path.exists(lang_dir): # z.B. /home/walter/.var/app/im.bernard.Parolu/data/parolu/models/de
-            for voice_id in os.listdir(lang_dir): # die Stimmdateien einer bestimmten Sprache
-                print ('voice_id = ', voice_id)
-                voice_path = os.path.join(lang_dir, voice_id)
+
+        if lang_code == "eo": # wenn die Sprache Esperanto ist kommen die Stimmen aus app/share/piper/eo
+            path = "/app/share/piper/eo"
+
+            for voice_id in os.listdir(path): # die Stimmdateien von eo
+
+                voice_path = os.path.join(path, voice_id)
+                print ('  Stimmpfad  ', voice_path)
                 if os.path.isdir(voice_path):  # wenn voice_path ein Ordner ist
+                    print (' ist eine gültige Stimme  ', self._is_valid_voice(voice_path, voice_id))
                     if self._is_valid_voice(voice_path, voice_id):
                         voices.append({
                             'id': voice_id,
                             'name': self._get_voice_name(voice_id),
                             'path': voice_path
                         })
-        return voices
+            return voices
+
+        else:
+            if os.path.exists(lang_dir): # z.B. /home/walter/.var/app/im.bernard.Parolu/data/parolu/models/de
+                for voice_id in os.listdir(lang_dir): # die Stimmdateien einer bestimmten Sprache
+                    print ('voice_id = ', voice_id)
+                    voice_path = os.path.join(lang_dir, voice_id)
+                    if os.path.isdir(voice_path):  # wenn voice_path ein Ordner ist
+                        if self._is_valid_voice(voice_path, voice_id):
+                            voices.append({
+                                'id': voice_id,
+                                'name': self._get_voice_name(voice_id),
+                                'path': voice_path
+                            })
+            return voices
 
     def _is_valid_voice(self, voice_path, voice_id):
         """Überprüft ob Stimme vollständig ist"""
@@ -65,7 +84,7 @@ class VoiceManager:
         return voice_dir
 
     def _download_file(self, url, dest_path, progress_callback=None):
-        """Lädt eine Datei herunter und speichert sie in dest_path"""
+        """Lädt eine Stimm-Datei herunter und speichert sie in dest_path"""
         response = requests.get(url, stream=True)
         response.raise_for_status()
 

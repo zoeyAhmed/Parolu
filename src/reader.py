@@ -38,28 +38,11 @@ class Reader():
 
         self.voicemanager = VoiceManager(self)
 
-        if self.lang_code == 'eo':
+        if lang_code == "eo":
             text = convert_text(text)
-            print(text)  # Ausgabe konveertiert
+            print ('Text nach Konvertierung', text)
 
-        if self.engine == 'pyttsx4':
-            self.use_pyttsx4(text, lang_code, pitch, speed)
-
-        elif self.engine == 'piper':
-            self.use_piper(text, lang_code, selected_voice, pitch, speed)
-
-        elif self.engine == 'gTTS':
-            # Ausgabe der Audiodatei mit gTTS
-            if lang_code == "de" or "it" or "es" or "fr":
-                self.use_gTTS(text, lang_code)
-
-            else:
-                print ('andere Sprache funktioniert noch nicht')
-                #return
-
-        else:
-            print ('andere engine funktioniert noch nicht')
-            #return
+        self.use_piper(text, lang_code, selected_voice, pitch, speed)
 
     def _init_gstreamer(self):
         """Initialisiert GStreamer Pipeline"""
@@ -137,54 +120,6 @@ class Reader():
             print(f"Piper Fehler (Typ: {type(e)}): {e}")
             self._play_test_tone()
 
-    def use_pyttsx4(self,text, lang_code, pitch, speed):
-
-        if lang_code == "de":
-            lang = 'German'
-        elif lang_code == "it":
-            lang = 'Italian'
-        elif lang_code == "es":
-            lang = 'Spanish'
-        elif lang_code == "eo":
-            lang = 'Esperanto'
-        elif lang_code == "fr":
-            lang = 'French'
-        else:
-            print ('andere Sprache funktioniert noch nicht')
-            return
-
-        engine = pyttsx4.init()
-        print (lang)
-
-        engine.setProperty('voice', lang)
-        rate = int(speed)
-        engine.setProperty('rate', rate)
-
-        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as fp:
-            engine.save_to_file(text, fp.name)
-            engine.runAndWait()
-            self.temp_path = fp.name
-            print ('Pfad zur temporären Datei  ', self.temp_path)
-
-        self._play_audio_file(self.temp_path)
-
-    def use_gTTS(self, text, lang_code):
-        print ('lang in gTTS ', lang_code)
-        try:
-            #from gtts import gTTS, lang
-
-            # Temporäre Datei erstellen
-            with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as fp:
-                tts = gTTS(text=text, lang=lang_code)
-                tts.save(fp.name)
-                self.temp_path = fp.name  # Pfad zur temporären Datei merken
-                print ('Pfad zur temporären Datei  ', self.temp_path)
-                # Mit GStreamer abspielen
-                self._play_audio_file(fp.name)
-
-        except Exception as e:
-            print(f"GTTS Fehler: {e}")
-            self._play_test_tone()
 
     def save_audio_file(self, file):  # speichert Audio-File mit Auswahldialog
         shutil.move(self.temp_path, file)  # verschiebt die temporäre Datei

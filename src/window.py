@@ -135,8 +135,8 @@ class ParoluWindow(Adw.ApplicationWindow):
     def _update_voice_chooser(self, lang_code):
         """Aktualisiert die Dropdown-Auswahl"""
         voices = self.voicemanager.get_installed_voices(lang_code)
-        # print ('lang_code in voice_chooser  ', lang_code)
-        # print ('verfügbare voices  ', voices)
+        print ('lang_code in voice_chooser  ', lang_code)
+        print ('verfügbare voices  ', voices)
 
         model = Gtk.StringList.new()
         for voice in voices:
@@ -177,20 +177,20 @@ class ParoluWindow(Adw.ApplicationWindow):
         dialog.present()
 
     def _fetch_available_voices(self):
-        """Lädt verfügbare Stimmen von der Piper GitHub-Seite oder lokal zwischengespeichert"""
+        # Lädt verfügbare Stimmen von der Piper GitHub-Seite oder lokal zwischengespeichert
         try:
-            # 1. Versuche, von GitHub zu laden
+            #1. Versuche, von GitHub zu laden
             response = requests.get(
                 self.voices_api,
                 timeout=20  # Timeout nach 10 Sekunden
             )
             response.raise_for_status()  # Wirft Exception bei HTTP-Fehlern
 
-            # 2. Parse die Markdown-Antwort
+            #2. Parse die Markdown-Antwort
             print ('### jetzt rufe ich aus fetch_available parse_voices auf für  ', self.lang_code)
             voices = self._parse_voices_md(response.text, self.lang_code)
 
-            # 3. Cache die Stimmen lokal
+            #3. Cache die Stimmen lokal
             cache_dir = os.path.join(GLib.get_user_cache_dir(), "parolu")
             os.makedirs(cache_dir, exist_ok=True)
 

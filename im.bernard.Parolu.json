@@ -221,21 +221,41 @@
 	},
 
 	{
-	  "name": "piper-model-kerstin",
+	  "name": "piper-model-darkman",
 	  "buildsystem": "simple",
 	  "build-commands": [
-	    "mkdir -p /app/share/piper/de",
-	    "cp de_DE-kerstin-low.onnx /app/share/piper/de/",
-	    "cp de_DE-kerstin-low.onnx.json /app/share/piper/de/"
+	    "mkdir -p /app/share/piper/eo/eo-darkman-medium",
+	    "cp eo-darkman-medium.onnx /app/share/piper/eo/eo-darkman-medium/",
+	    "cp eo-darkman-medium.onnx.json /app/share/piper/eo/eo-darkman-medium/"
 	  ],
 	  "sources": [
 	    {
 	      "type": "file",
-	      "path": "models/de/de_DE-kerstin-low.onnx"
+	      "path": "models/eo/eo-darkman-medium/eo-darkman-medium.onnx"
 	    },
 	    {
 	      "type": "file",
-	      "path": "models/de/de_DE-kerstin-low.onnx.json"
+	      "path": "models/eo/eo-darkman-medium/eo-darkman-medium.onnx.json"
+	    }
+	  ]
+	},
+
+	{
+	  "name": "piper-model-gosia",
+	  "buildsystem": "simple",
+	  "build-commands": [
+	    "mkdir -p /app/share/piper/eo/eo-gosia-medium",
+	    "cp eo-gosia-medium.onnx /app/share/piper/eo/eo-gosia-medium/",
+	    "cp eo-gosia-medium.onnx.json /app/share/piper/eo/eo-gosia-medium/"
+	  ],
+	  "sources": [
+	    {
+	      "type": "file",
+	      "path": "models/eo/eo-gosia-medium/eo-gosia-medium.onnx"
+	    },
+	    {
+	      "type": "file",
+	      "path": "models/eo/eo-gosia-medium/eo-gosia-medium.onnx.json"
 	    }
 	  ]
 	},
