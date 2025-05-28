@@ -308,11 +308,13 @@ class ParoluWindow(Adw.ApplicationWindow):
     # Dialog zum Speichern einer Text-Datei wird definiert
     def save_text_dialog(self, action, _):
         native = Gtk.FileDialog()
+        native.set_initial_name("text.txt")
         native.save(self, None, self.on_save_text_response)
 
     # Dialog zum Speichern einer Audio-Datei wird definiert
     def save_audio_dialog(self, action):
         native = Gtk.FileDialog()
+        native.set_initial_name("audio.wav")
         native.save(self, None, self.on_save_audio_response)
 
     # definiert was geschieht wenn Datei ausgewählt/nicht ausgewählt wurde
