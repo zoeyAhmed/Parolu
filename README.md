@@ -1,5 +1,6 @@
 # parolu
 
 Ein einfaches Werkzeug um Text in Sprache umzuwandeln. 
-Espeak und piper funktionieren lokal, gTTS benötigt Internet-Verbindung.
-Bei piper muss vorher mindestens eine Stimme heruntergeladen werden.
+Zwei Esperanto-Stimmen werden mit der Anwendung mitgeliefert,
+weil es aktuell keine geeigneten Esperanto-Stimmen zum Herunterladen.
+Bei den anderen Sprachen muss vorher mindestens eine Stimme heruntergeladen werden.
