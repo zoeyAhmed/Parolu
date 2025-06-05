@@ -18,7 +18,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from gi.repository import Adw
-from gi.repository import Gtk, Gio, GLib
+from gi.repository import Gtk, Gio, GLib, Gdk
 
 resource = Gio.Resource.load("/app/share/parolu.gresource")
 Gio.Resource._register(resource)
@@ -35,6 +35,11 @@ from gtts import gTTS, lang
 from .reader import Reader
 
 from .pipervoice import VoiceManager
+
+display = Gdk.Display.get_default()
+if display:
+    icon_theme = Gtk.IconTheme.get_for_display(display)
+    icon_theme.add_search_path("/app/share/icons")
 
 @Gtk.Template(resource_path='/im/bernard/Parolu/window.ui')
 class ParoluWindow(Adw.ApplicationWindow):
@@ -415,7 +420,7 @@ class ParoluWindow(Adw.ApplicationWindow):
         engine = 'piper'
         print(engine)
 
-        pitch = self.pitch_chooser.get_selected_item().get_string()
+        pitch = self.pitch_chooser.get_value()
         print('pitch', pitch)
 
         speed = self.speed_chooser.get_selected_item().get_string()

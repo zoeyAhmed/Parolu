@@ -273,6 +273,21 @@
 	  ]
 	},
 
+	  {
+	    "name": "icons",
+	    "buildsystem": "simple",
+	    "build-commands": [
+	      "mkdir -p /app/share/icons/hicolor/scalable/actions/",
+	      "install -Dm644 data/icons/hicolor/scalable/actions/speed-symbolic.svg /app/share/icons/hicolor/scalable/actions/speed-symbolic.svg || true"
+	      ],
+	    "sources": [
+	      {
+		"type": "dir",
+		"path": "."
+	      }
+	    ]
+	  },
+
     {
       "name": "gst-plugins",
       "buildsystem": "simple",
