@@ -54,12 +54,15 @@ class ParoluWindow(Adw.ApplicationWindow):
     pitch_chooser = Gtk.Template.Child()   # lädt Geschlecht
     speed_chooser= Gtk.Template.Child()    # lädt Sprechgeschwindigkeit
     voice_chooser= Gtk.Template.Child()    # lädt Stimme
+    label_1 = Gtk.Template.Child()         # zeigt Stimmlage an
+    adjustment_1 = Gtk.Template.Child()    # Wert der Stimmlage
+    label_2 = Gtk.Template.Child()         # zeigt Geschwindigkeit an
+    adjustment_2 = Gtk.Template.Child()    # Wert der Geschwindigkeit
+
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        # self.pitch_chooser.set_selected(4)
-        self.speed_chooser.set_selected(4)
         # die Aktion zum Öffnen einer Datei wird hinzugefügt
         open_action = Gio.SimpleAction(name="open")
         open_action.connect("activate", self.open_file_dialog)
@@ -84,6 +87,12 @@ class ParoluWindow(Adw.ApplicationWindow):
         #die Aktion zum  Speichern des Audio-files wird hinzugefügt
         self.save_button.connect('clicked', self.save_audio_dialog)
 
+        #die Aktion beim Ändern der Stimmlage wird hinzugefügt
+        self.adjustment_1.connect("value-changed", self.on_adjustment_value_changed)
+
+        #die Aktion beim Ändern der Geschwindigkeit wird hinzugefügt
+        self.adjustment_2.connect("value-changed", self.on_adjustment_value_changed)
+
         ## Operationen zum Auswählen bzw Laden einer Stimme ##
         # ======================================================================
         # Stimmen-API-URL hier können die piper-Stimmen heruntergeladen werden
@@ -106,13 +115,10 @@ class ParoluWindow(Adw.ApplicationWindow):
         lang_name = self.lang_chooser.get_selected_item().get_string()
         self.lang_code = self.lang_map.get(lang_name, "en")
         print ('Sprachkodex am Beginn  ', self.lang_code)
-        # voices = self.voicemanager.get_installed_voices(self.lang_code)
-        # print ('Stimmen aus pipervoice  ', voices)
 
     def _connect_signals(self):
         self.lang_chooser.connect("notify::selected", self._on_lang_changed)
         self.voice_chooser.connect("notify::selected", self._on_voice_changed)
-        #self.voice_chooser.connect("notify::selected", self._show_voice_download_dialog)
 
     def _setup_lang_chooser(self):
         # Signal vorübergehend deaktivieren
@@ -155,12 +161,6 @@ class ParoluWindow(Adw.ApplicationWindow):
 
         self.voice_chooser.set_model(model)
         self.voice_chooser.set_selected(0)   # stellt Auswahlfenster auf die erste Zeile
-
-
-    # @Gtk.Template.Callback()
-    # def on_voice_download_selected(self, *args):
-    #     """Handhabt die Auswahl von 'Andere Stimme'"""
-    #     self._show_voice_download_dialog()
 
     def _show_voice_download_dialog(self):
         """Zeigt Download-Dialog an"""
@@ -342,6 +342,14 @@ class ParoluWindow(Adw.ApplicationWindow):
         if file is not None:
             self.read.save_audio_file(file)
 
+    # definiert was geschieht wenn Stimmlage geändert wird
+    def on_adjustment_value_changed(self, adjustment):
+        value = adjustment.get_value()
+        if adjustment == self.adjustment_1:
+            self.label_1.set_text(f"× {value:.1f}")
+        else:
+            self.label_2.set_text(f"× {value:.1f}")
+
     # Inhalt der Textdatei wird asynchron geöffnet um die Anwendung nicht zu blockieren
     def open_file(self, file):
         file.load_contents_async(None, self.open_file_complete)
@@ -423,7 +431,7 @@ class ParoluWindow(Adw.ApplicationWindow):
         pitch = self.pitch_chooser.get_value()
         print('pitch', pitch)
 
-        speed = self.speed_chooser.get_selected_item().get_string()
+        speed = self.speed_chooser.get_value()
         print('speed', speed)
 
         selected_voice = self.voice_chooser.get_selected_item().get_string()

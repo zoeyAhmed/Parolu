@@ -75,17 +75,18 @@
 
             <child>
               <object class="GtkMenuButton">
+                <property name="tooltip-text">Wählen Sie eine Stimmlage</property>
                 <child>
                   <object class="GtkBox">
                     <property name="spacing">6</property>
                     <child>
                       <object class="GtkImage">
-                        <property name="icon-name">speed-symbolic</property>
+                        <property name="icon-name">pitch-symbolic</property>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="label">
-                        <property name="label">× 1.0</property>
+                      <object class="GtkLabel" id="label_1">
+                        <property name="label">× 80.0</property>
                       </object>
                     </child>
                   </object>
@@ -107,7 +108,7 @@
                             <property name="orientation">1</property>
                             <property name="inverted">true</property>
                             <property name="adjustment">
-                              <object class="GtkAdjustment" id="adjustment">
+                              <object class="GtkAdjustment" id="adjustment_1">
                                 <property name="step-increment">0.5</property>
                                 <property name="lower">50</property>
                                 <property name="upper">150</property>
@@ -135,54 +136,76 @@
             </child>
 
             <child>
-              <object class="GtkDropDown" id="pitch_chooser__">
-                <property name="enable-search">false</property>
-                <property name="tooltip-text">Wählen Sie eine Stimmlage</property>
-                <property name="model">
-                  <object class="GtkStringList">
-                    <items>
-                      <item>40</item>
-                      <item>50</item>
-                      <item>60</item>
-                      <item>70</item>
-                      <item>80</item>
-                      <item>90</item>
-                      <item>100</item>
-                      <item>110</item>
-                      <item>120</item>
-                    </items>
-                  </object>
-                </property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkDropDown" id="speed_chooser">
-                <property name="enable-search">false</property>
+              <object class="GtkMenuButton">
                 <property name="tooltip-text">Wählen Sie eine Geschwindigkeit</property>
-                <property name="model">
-                  <object class="GtkStringList">
-                    <items>
-                      <item>40</item>
-                      <item>60</item>
-                      <item>80</item>
-                      <item>100</item>
-                      <item>120</item>
-                      <item>140</item>
-                      <item>160</item>
-                      <item>180</item>
-                      <item>200</item>
-                    </items>
+                <child>
+                  <object class="GtkBox">
+                    <property name="spacing">6</property>
+                    <child>
+                      <object class="GtkImage">
+                        <property name="icon-name">speed-symbolic</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_2">
+                        <property name="label">× 100.0</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <property name="popover">
+                  <object class="GtkPopover">
+                    <child>
+                      <object class="GtkBox">
+                        <property name="margin-start">4</property>
+                        <property name="margin-end">4</property>
+                        <property name="margin-top">4</property>
+                        <property name="margin-bottom">4</property>
+                        <property name="spacing">4</property>
+                        <property name="orientation">1</property>
+                        <child>
+                          <object class="GtkScale" id="speed_chooser">
+                            <property name="height-request">200</property>
+                            <property name="vexpand">true</property>
+                            <property name="orientation">1</property>
+                            <property name="inverted">true</property>
+                            <property name="adjustment">
+                              <object class="GtkAdjustment" id="adjustment_2">
+                                <property name="step-increment">0.5</property>
+                                <property name="lower">40</property>
+                                <property name="upper">200</property>
+                                <property name="value">100</property>
+                              </object>
+                            </property>
+                            <signal name="change-value" handler="scale_change_value_cb"/>
+                            <marks>
+                              <mark value="0.5" position="bottom"></mark>
+                              <mark value="1" position="bottom"></mark>
+                              <mark value="2" position="bottom"></mark>
+                              <mark value="3" position="bottom"></mark>
+                            </marks>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
                   </object>
                 </property>
+                <style>
+                  <class name="flat"/>
+                  <class name="numeric"/>
+                </style>
               </object>
             </child>
+
             <child>
               <object class="GtkButton" id="read_button">
                 <property name="label" translatable="true">Read</property>
+                <property name="tooltip-text">Lesen des Texts</property>
               </object>
             </child>
             <child type="end">
               <object class="GtkButton" id="save_button">
+                <property name="tooltip-text">Speichern des Audios</property>
                 <property name="label" translatable="true">Save</property>
               </object>
             </child>
