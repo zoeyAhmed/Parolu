@@ -128,8 +128,20 @@ class ParoluWindow(Adw.ApplicationWindow):
         self.wait_dialog.show()
 
     def hide_wait_dialog(self):
-        if hasattr(self, 'wait_dialog'):
+        if hasattr(self, 'wait_dialog') and self.wait_dialog:
             self.wait_dialog.destroy()
+        if hasattr(self, 'spinner') and self.spinner:
+            self.spinner.stop()
+
+    def _show_error(self, message):
+        dialog = Gtk.MessageDialog(
+            transient_for=self,
+            message_type=Gtk.MessageType.ERROR,
+            buttons=Gtk.ButtonsType.OK,
+            text=message
+        )
+        dialog.connect("response", lambda d, _: d.destroy())
+        dialog.show()
 
     def _connect_signals(self):
         self.lang_chooser.connect("notify::selected", self._on_lang_changed)
@@ -453,7 +465,7 @@ class ParoluWindow(Adw.ApplicationWindow):
         selected_voice = self.voice_chooser.get_selected_item().get_string()
         print('Stimme', selected_voice)
 
-        self.read = Reader(text, engine, self.lang_code, selected_voice, pitch, speed, window=self)
+        self.reader = Reader(text, engine, self.lang_code, selected_voice, pitch, speed, window=self)
 
 
 

@@ -36,6 +36,10 @@ class Reader():
         self.selected_voice = selected_voice
         Gst.init(None)
         self._init_gstreamer()
+
+        self._dialog_ready = threading.Event()
+        self._pipeline = None
+
         print ('in reader erhaltener lang_code  ', self.lang_code)
 
         self.voicemanager = VoiceManager(self)
@@ -78,90 +82,143 @@ class Reader():
 
         raise FileNotFoundError(f"Stimme {voice_name} ({lang_code}) nicht gefunden")
 
-    def use_piper(self, text, lang_code, selected_voice, pitch, speed):  # Ausgabe über wav
+    def use_piper(self, text, lang_code, selected_voice, pitch, speed):
+        """Hauptmethode für Sprachsynthese"""
         print(f"Starte Piper-Synthese für: '{text[:20]}...'")
 
-        # Warte-Dialog im Hauptthread anzeigen
-        GLib.idle_add(self.window.show_wait_dialog)
+        # 1. UI sperren und Dialog anzeigen
+        GLib.idle_add(self._show_processing_ui)
 
-        voices = self.voicemanager.get_installed_voices(lang_code)
-        for voice in voices:
-            if voice['name'] == self.selected_voice:
-                voice_id = voice['id']
+        # 2. Synthese im Hintergrundthread starten
+        threading.Thread(
+            target=self._synthesize_audio,
+            args=(text, lang_code, selected_voice, pitch, speed),
+            daemon=True
+        ).start()
 
-        def synthesize():
+    def _reactivate_ui(self):
+        """Reaktiviert die Benutzeroberfläche"""
+        if hasattr(self, 'window') and self.window:
+            self.window.set_sensitive(True)
+            self.window.hide_wait_dialog()
+
+    def _show_processing_ui(self):
+        """Zeigt Warte-Dialog und deaktiviert UI"""
+        if self.window:
+            self.window.set_sensitive(False)
+            self.window.show_wait_dialog()
+            self._dialog_ready.set()
+
+    def _synthesize_audio(self, text, lang_code, voice, pitch, speed):
+        """Audio-Synthese im Hintergrundthread"""
+        temp_path = None
+        try:
+            # Warten bis Dialog wirklich sichtbar ist
+            if not self._dialog_ready.wait(timeout=2.0):
+                print("Warnung: Dialog konnte nicht angezeigt werden")
+
+            voices = self.voicemanager.get_installed_voices(lang_code)
+            for voice in voices:
+                if voice['name'] == self.selected_voice:
+                    voice_id = voice['id']
+
+            model_path, config_path = self.get_voice_path(lang_code, voice_id)
+            print(f"Verwende Modell: {model_path}")
+
+            if not (os.path.exists(model_path) and os.path.exists(config_path)):
+                print("❌ Modell oder Konfiguration fehlen")
+                return
+
+            print(f"Starte Synthese mit: {model_path} (Existiert: {os.path.exists(model_path)})")
+
+            self.p = piper.piper_api(model_path, config_path)   # Sythesizer
+
+            lenght_scale = 1/self.speed  # verändert die Geschwindigkeit
+
+            samples = self.p.text_to_audio(text, lenght_scale)
+
+            # wav Data erstellen
+            target_rate = pitch*22050   # verändert die Stimmlage
+            wav_data = self._samples_to_wav(samples, target_rate)
+
+            # Temporäre Datei erstellen
+            with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
+                f.write(wav_data)
+                temp_path = f.name
+
+            # Wiedergabe mit Reaktivierungs-Callback starten
+            GLib.idle_add(
+                lambda: self._play_audio_file_async(
+                    temp_path,
+                    callback=lambda: self._reactivate_ui()
+                )
+            )
+
+        except Exception as e:
+            GLib.idle_add(self._handle_error, str(e), temp_path)
+
+    def _handle_error(self, error_msg, temp_path=None):
+        """Zentrale Fehlerbehandlung"""
+        print(f"Fehler: {error_msg}")
+        if self.window:
+            self.window.hide_wait_dialog()
+            self.window.set_sensitive(True)
+            self.window._show_error(error_msg)
+
+        if temp_path:
             try:
-                self.window.show_wait_dialog()
-
-                model_path, config_path = self.get_voice_path(lang_code, voice_id)
-                print(f"Verwende Modell: {model_path}")
-
-                if not (os.path.exists(model_path) and os.path.exists(config_path)):
-                    print("❌ Modell oder Konfiguration fehlen")
-                    return
-
-                print(f"Starte Synthese mit: {model_path} (Existiert: {os.path.exists(model_path)})")
-
-                self.p = piper.piper_api(model_path, config_path)   # Sythesizer
-
-                lenght_scale = 1/self.speed  # verändert die Geschwindigkeit
-
-                samples = self.p.text_to_audio(text, lenght_scale)
-
-                # wav Data erstellen
-                target_rate = pitch*22050   # verändert die Stimmlage
-                wav_data = self._samples_to_wav(samples, target_rate)
-
-                # Temporäre Datei erstellen
-                with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
-                    f.write(wav_data)
-                    temp_path = f.name
-
-                # Dialog schließen (BEVOR die Wiedergabe startet)
-                GLib.idle_add(self.window.hide_wait_dialog)
-
-                # Wiedergabe starten
-                GLib.idle_add(self._play_audio_file, temp_path)
-
-            except Exception as e:
-                GLib.idle_add(self.window.hide_wait_dialog)
-                GLib.idle_add(self._show_error, f"Synthese fehlgeschlagen: {str(e)}")
-
-        # Thread starten
-        threading.Thread(target=synthesize, daemon=True).start()
-
-    def _on_synthesis_done(self, wav_data):
-        self.window.hide_wait_dialog()
-        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
-            f.write(wav_data)
-            self._play_audio_file(f.name)
-
-                    #     with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as fp:
-                    # self.temp_path = fp.name  # Pfad zur temporären Datei merken
-                    # print ('Pfad zur temporären Datei  ', self.temp_path)
-                    # with open(self.temp_path, "wb") as f:
-                    #     f.write(wav_data)
-                    # self._play_audio_file(fp.name)
-
+                os.unlink(temp_path)
+            except:
+                pass
 
     def save_audio_file(self, file):  # speichert Audio-File mit Auswahldialog
         shutil.move(self.temp_path, file)  # verschiebt die temporäre Datei
 
-    def _play_audio_file(self, file_path):
-        """Spielt Audio-Dateien mit GStreamer ab"""
+    def _play_audio_file_async(self, file_path, callback=None):
+        """Nicht-blockierende GStreamer-Wiedergabe mit Callback"""
         pipeline = Gst.parse_launch(
             f"filesrc location={file_path} ! decodebin ! audioconvert ! audioresample ! autoaudiosink"
         )
+
+        # Callback für Wiedergabe-Ende
+        bus = pipeline.get_bus()
+        bus.add_signal_watch()
+        bus.connect("message", self._on_gst_message, pipeline, file_path, callback)
+
+        # Callback-Handler hinzufügen
+        bus.connect("message", self._on_gst_message, pipeline, file_path, callback)
+
         pipeline.set_state(Gst.State.PLAYING)
 
-        # Warte auf Ende der Wiedergabe
-        bus = pipeline.get_bus()
-        msg = bus.timed_pop_filtered(
-            Gst.CLOCK_TIME_NONE,
-            Gst.MessageType.ERROR | Gst.MessageType.EOS
-        )
+        # Pipeline als Instanzvariable speichern
+        self._current_pipeline = pipeline
 
-        pipeline.set_state(Gst.State.NULL)
+    def _on_gst_message(self, bus, message, pipeline, file_path, callback):
+        """Verarbeitet GStreamer-Nachrichten"""
+        if message.type == Gst.MessageType.ERROR:
+            err, debug = message.parse_error()
+            print(f"Wiedergabefehler: {err.message}")
+            self._cleanup_pipeline(pipeline, file_path)
+            if callback:
+                GLib.idle_add(callback)
+
+        elif message.type == Gst.MessageType.EOS:
+            self._cleanup_pipeline(pipeline, file_path)
+            if callback:
+                GLib.idle_add(callback)
+
+    def _cleanup_pipeline(self, pipeline, file_path):
+        """Räumt Pipeline-Ressourcen auf"""
+        if pipeline:
+            pipeline.set_state(Gst.State.NULL)
+            if hasattr(self, '_current_pipeline'):
+                del self._current_pipeline
+
+        if file_path and os.path.exists(file_path):
+            try:
+                os.unlink(file_path)
+            except Exception as e:
+                print(f"Fehler beim Löschen: {e}")
 
     def _play_raw(self, samples, rate):
         """Spielt Rohdaten mit GStreamer"""
