@@ -146,6 +146,10 @@ class Reader():
                 f.write(wav_data)
                 temp_path = f.name
 
+            # Dialog schließen VOR Wiedergabe
+            if hasattr(self, 'window') and self.window:
+                GLib.idle_add(self.window.hide_wait_dialog)
+
             # Wiedergabe mit Reaktivierungs-Callback starten
             GLib.idle_add(
                 lambda: self._play_audio_file_async(
