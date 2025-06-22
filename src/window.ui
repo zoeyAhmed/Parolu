@@ -76,6 +76,7 @@
             <child>
               <object class="GtkMenuButton">
                 <property name="tooltip-text">Wählen Sie eine Stimmlage</property>
+                <property name="width-request">80</property>
                 <child>
                   <object class="GtkBox">
                     <property name="spacing">6</property>
@@ -138,6 +139,7 @@
             <child>
               <object class="GtkMenuButton">
                 <property name="tooltip-text">Wählen Sie eine Geschwindigkeit</property>
+                <property name="width-request">80</property>
                 <child>
                   <object class="GtkBox">
                     <property name="spacing">6</property>
