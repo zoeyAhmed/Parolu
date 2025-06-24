@@ -29,6 +29,7 @@ import shutil
 import requests
 import json
 import time
+import threading
 
 from gtts import gTTS, lang
 
@@ -317,22 +318,31 @@ class ParoluWindow(Adw.ApplicationWindow):
 
     def _on_voice_selected(self, btn, voice_id, model_url, config_url, dialog):
         """Installiert die ausgewählte Stimme"""
-        dialog.set_body("Download läuft...")
+
         lang_code = self.lang_code
         print ('voice_id in on_voice selected =  ', voice_id, 'Sprache', lang_code)
-        def on_progress(progress):
-            dialog.set_body(f"Download: {progress}%")
+
+        # Initiale Meldung anzeigen
+        GLib.idle_add(dialog.set_body, "Download läuft...")
+
+        def on_progress(downloaded, total_size):
+            # Prozentberechnung
+            progress = int((downloaded / total_size) * 100) if total_size > 0 else 0
+            GLib.idle_add(dialog.set_body, f"Download: {progress}%")
 
         def on_complete():
-            dialog.destroy()
-            self._update_voice_chooser(lang_code)
+            GLib.idle_add(dialog.destroy)
+            GLib.idle_add(self._update_voice_chooser, lang_code)
 
-        self.voicemanager.download_voice(
-            voice_id, model_url, config_url,
-            progress_callback=on_progress
-        )
-        GLib.idle_add(on_complete)
+        # Download in einem separaten Thread starten
+        def download_thread():
+            self.voicemanager.download_voice(
+                voice_id, model_url, config_url,
+                progress_callback=on_progress
+            )
+            on_complete()
 
+        threading.Thread(target=download_thread, daemon=True).start()
     ## ================================================================##
     # Dialog zum Öffnen einer Datei wird definiert
     def open_file_dialog(self, action, _):

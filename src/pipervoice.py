@@ -84,10 +84,17 @@ class VoiceManager:
         return voice_dir
 
     def _download_file(self, url, dest_path, progress_callback=None):
-        """Lädt eine Stimm-Datei herunter und speichert sie in dest_path"""
+        """Lädt eine Stimm-Datei herunter mit Fortschrittsanzeige"""
         response = requests.get(url, stream=True)
         response.raise_for_status()
 
+        total_size = int(response.headers.get('content-length', 0))
+        downloaded = 0
+
         with open(dest_path, 'wb') as f:
             for chunk in response.iter_content(chunk_size=8192):
-                f.write(chunk)
+                if chunk:  # Filter out keep-alive chunks
+                    f.write(chunk)
+                    downloaded += len(chunk)
+                    if progress_callback:
+                        progress_callback(downloaded, total_size)
