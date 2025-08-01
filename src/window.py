@@ -224,6 +224,7 @@ class ParoluWindow(Adw.ApplicationWindow):
                 self.voices_api,
                 timeout=20  # Timeout nach 10 Sekunden
             )
+            print (' ===========0===== , reponse', response.text) # response liest alle verfügbaren Stimmen ein
             response.raise_for_status()  # Wirft Exception bei HTTP-Fehlern
 
             #2. Parse die Markdown-Antwort
@@ -277,7 +278,19 @@ class ParoluWindow(Adw.ApplicationWindow):
             # Qualität und URLs erkennen (z.B. "* medium - [[model](http...)]")
             if current_voice and line.startswith('* ') and 'http' in line:
                 quality = line.split('*')[1].split('-')[0].strip()
-                urls = [u.split('(')[1].split(')')[0] for u in line.split('[') if 'http' in u]
+                urls = []
+                parts = line.split('[')  # Teile die Zeile an den '['
+                for part in parts:
+                    if 'http' in part:
+                        # Extrahiere den Teil zwischen '(' und ')'
+                        start = part.find('(')
+                        end = part.find(')')
+                        if start != -1 and end != -1 and start < end:
+                            url = part[start + 1:end]
+                            urls.append(url)
+                if urls[1].endswith(".json"): # wenn in der confi-Datei nach True .json steht
+                    urls[1] = urls[1][:-5]
+
                 print ('---------- urls der Stimme in parse', urls)
                 if urls and len(urls) >= 2:
                     voices.append({
