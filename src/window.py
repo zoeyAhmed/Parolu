@@ -199,22 +199,41 @@ class ParoluWindow(Adw.ApplicationWindow):
             transient_for=self,
             heading="Neue Stimme herunterladen"
         )
+        # Schließen-Button hinzufügen
+        dialog.add_response("close", "Schließen")
+        dialog.set_response_appearance("close", Adw.ResponseAppearance.DEFAULT)
+        dialog.connect("response", self._on_dialog_response)
 
-        # Lade verfügbare Stimmen vom Server
+        # Lade verfügbare Stimmen vom Server und bereits installierte Stimmen
         available_voices = self._fetch_available_voices()
-        print ('======= Verfügbare Stimmen  ', available_voices)
+        installed_voices = self.voicemanager.get_installed_voices(self.lang_code)
+        # Extrahiere nur die IDs der installierten Stimmen
+        installed_ids = {voice['id'] for voice in installed_voices}
+
         # Erstelle Auswahl-Liste
         listbox = Gtk.ListBox()
         for voice in available_voices:
-            row = Adw.ActionRow(title=voice['name'])
-            # print ('in show voice_download_dialog model_url', model_url)
-            print ('$$$####$$$$ in show voice_download_dialog voice', voice)
-            btn = Gtk.Button(label="Installieren")
-            btn.connect('clicked', self._on_voice_selected, voice['id'], voice['model_url'], voice['config_url'], dialog)
-            row.add_suffix(btn)
+
+            if voice['id'] not in installed_ids:  # Nur wenn nicht installiert
+                row = Adw.ActionRow(title=voice['name'])
+                btn = Gtk.Button(label="Installieren")
+                btn.connect('clicked', self._on_voice_selected,
+                           voice['id'], voice['model_url'], voice['config_url'], dialog)
+                row.add_suffix(btn)
+                listbox.append(row)
+
+        # Falls alle Stimmen installiert sind, entsprechende Meldung anzeigen
+        if listbox.get_first_child() is None:
+            row = Adw.ActionRow(title="Alle verfügbaren Stimmen sind bereits installiert")
             listbox.append(row)
+
         dialog.set_extra_child(listbox)
         dialog.present()
+
+    def _on_dialog_response(self, dialog, response):
+        """Behandelt Dialog-Antworten"""
+        if response == "close":
+            dialog.destroy()
 
     def _fetch_available_voices(self):
         # Lädt verfügbare Stimmen von der Piper GitHub-Seite oder lokal zwischengespeichert
@@ -224,7 +243,7 @@ class ParoluWindow(Adw.ApplicationWindow):
                 self.voices_api,
                 timeout=20  # Timeout nach 10 Sekunden
             )
-            print (' ===========0===== , reponse', response.text) # response liest alle verfügbaren Stimmen ein
+            # print (' ===========0===== , reponse', response.text) # response liest alle verfügbaren Stimmen ein
             response.raise_for_status()  # Wirft Exception bei HTTP-Fehlern
 
             #2. Parse die Markdown-Antwort
