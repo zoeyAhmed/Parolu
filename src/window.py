@@ -194,46 +194,70 @@ class ParoluWindow(Adw.ApplicationWindow):
         self.voice_chooser.set_selected(0)   # stellt Auswahlfenster auf die erste Zeile
 
     def _show_voice_download_dialog(self):
-        """Zeigt Download-Dialog an"""
-        dialog = Adw.MessageDialog(
+        dialog = Adw.Window(
             transient_for=self,
-            heading="Neue Stimme herunterladen"
+            modal=True,
+            title="",  # Leerer Titel verhindert doppelte Anzeige
+            default_width=500,
+            default_height=300,
+            deletable=True  # X-Button aktivieren
         )
-        # Schließen-Button hinzufügen
-        dialog.add_response("close", "Schließen")
-        dialog.set_response_appearance("close", Adw.ResponseAppearance.DEFAULT)
-        dialog.connect("response", self._on_dialog_response)
 
-        # Lade verfügbare Stimmen vom Server und bereits installierte Stimmen
+        # Hauptcontainer mit HeaderBar
+        main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+
+        # Custom HeaderBar ohne doppelte Titelleiste
+        header_bar = Adw.HeaderBar()
+        title = Adw.WindowTitle(title="Neue Stimme herunterladen",
+                              subtitle="Wählen Sie eine Stimme aus")
+        header_bar.set_title_widget(title)
+        main_box.append(header_bar)
+
+        # Scrollbereich für die Liste
+        scrolled = Gtk.ScrolledWindow(vexpand=True)
+        listbox = Gtk.ListBox(selection_mode=Gtk.SelectionMode.NONE)
+
+        # Stimmen laden und filtern
         available_voices = self._fetch_available_voices()
         installed_voices = self.voicemanager.get_installed_voices(self.lang_code)
-        # Extrahiere nur die IDs der installierten Stimmen
-        installed_ids = {voice['id'] for voice in installed_voices}
+        installed_ids = {v['id'] for v in installed_voices}
 
-        # Erstelle Auswahl-Liste
-        listbox = Gtk.ListBox()
+        # Fortschrittsanzeigen Dictionary
+        self.download_progress = {}
+
         for voice in available_voices:
+            if voice['id'] not in installed_ids:
+                row = Adw.ActionRow(title=voice['name'],
+                                  margin_start=12,
+                                  margin_end=12)
 
-            if voice['id'] not in installed_ids:  # Nur wenn nicht installiert
-                row = Adw.ActionRow(title=voice['name'])
-                btn = Gtk.Button(label="Installieren")
+                # Fortschrittsbalken
+                progress = Gtk.ProgressBar(
+                    show_text=True,
+                    visible=False,
+                    margin_end=12
+                )
+                self.download_progress[voice['id']] = progress
+
+                # Installations-Button
+                btn = Gtk.Button(label="Installieren",
+                               css_classes=["suggested-action"])
                 btn.connect('clicked', self._on_voice_selected,
-                           voice['id'], voice['model_url'], voice['config_url'], dialog)
+                          voice['id'], voice['model_url'], voice['config_url'], dialog)
+
+                # Layout
+                row.add_suffix(progress)
                 row.add_suffix(btn)
                 listbox.append(row)
 
-        # Falls alle Stimmen installiert sind, entsprechende Meldung anzeigen
         if listbox.get_first_child() is None:
-            row = Adw.ActionRow(title="Alle verfügbaren Stimmen sind bereits installiert")
+            row = Adw.ActionRow(title="Alle Stimmen sind bereits installiert")
             listbox.append(row)
 
-        dialog.set_extra_child(listbox)
+        scrolled.set_child(listbox)
+        main_box.append(scrolled)
+        dialog.set_content(main_box)
         dialog.present()
-
-    def _on_dialog_response(self, dialog, response):
-        """Behandelt Dialog-Antworten"""
-        if response == "close":
-            dialog.destroy()
 
     def _fetch_available_voices(self):
         # Lädt verfügbare Stimmen von der Piper GitHub-Seite oder lokal zwischengespeichert
@@ -349,32 +373,67 @@ class ParoluWindow(Adw.ApplicationWindow):
         }]
 
     def _on_voice_selected(self, btn, voice_id, model_url, config_url, dialog):
-        """Installiert die ausgewählte Stimme"""
-
+        """Installiert die ausgewählte Stimme mit Fortschrittsanzeige"""
         lang_code = self.lang_code
-        print ('voice_id in on_voice selected =  ', voice_id, 'Sprache', lang_code)
+        print(f'Installiere Stimme: {voice_id}, Sprache: {lang_code}')
 
-        # Initiale Meldung anzeigen
-        GLib.idle_add(dialog.set_body, "Download läuft...")
+        # UI-Elemente vorbereiten
+        btn.set_sensitive(False)
+        btn.set_label("Wird installiert...")
 
+        # Fortschrittsanzeige holen (aus self.download_progress)
+        progress = self.download_progress.get(voice_id)
+        if progress:
+            GLib.idle_add(progress.set_visible, True)
+            GLib.idle_add(progress.set_fraction, 0.0)
+            GLib.idle_add(progress.set_text, "Vorbereitung... 0%")
+
+        # Callbacks für Fortschritt
         def on_progress(downloaded, total_size):
-            # Prozentberechnung
-            progress = int((downloaded / total_size) * 100) if total_size > 0 else 0
-            GLib.idle_add(dialog.set_body, f"Download: {progress}%")
+            fraction = downloaded / total_size if total_size > 0 else 0
+            percent = int(fraction * 100)
+
+            if progress:
+                GLib.idle_add(progress.set_fraction, fraction)
+                GLib.idle_add(progress.set_text, f"Download: {percent}%")
+            else:
+                GLib.idle_add(dialog.set_title, f"Download: {percent}%")
 
         def on_complete():
-            GLib.idle_add(dialog.destroy)
+            if progress:
+                GLib.idle_add(progress.set_text, "Installation abgeschlossen")
+                GLib.idle_add(progress.set_fraction, 1.0)
+
+            GLib.idle_add(btn.set_label, "Installiert")
+            GLib.idle_add(btn.get_style_context().remove_class, "suggested-action")
             GLib.idle_add(self._update_voice_chooser, lang_code)
 
-        # Download in einem separaten Thread starten
+            # Dialog nach 3 Sekunden schließen
+            GLib.timeout_add_seconds(3, dialog.destroy)
+
+        def on_error(error):
+            print(f"Download fehlgeschlagen: {error}")
+            GLib.idle_add(btn.set_label, "Erneut versuchen")
+            GLib.idle_add(btn.set_sensitive, True)
+            if progress:
+                GLib.idle_add(progress.set_text, f"Fehler: {str(error)}")
+                GLib.idle_add(progress.get_style_context().add_class, "error")
+
+        # Download-Thread
         def download_thread():
-            self.voicemanager.download_voice(
-                voice_id, model_url, config_url,
-                progress_callback=on_progress
-            )
-            on_complete()
+            try:
+                self.voicemanager.download_voice(
+                    voice_id,
+                    model_url,
+                    config_url,
+                    progress_callback=on_progress
+                )
+                on_complete()
+            except Exception as e:
+                on_error(e)
 
         threading.Thread(target=download_thread, daemon=True).start()
+
     ## ================================================================##
     # Dialog zum Öffnen einer Datei wird definiert
     def open_file_dialog(self, action, _):
