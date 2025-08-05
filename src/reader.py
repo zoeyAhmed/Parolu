@@ -41,13 +41,13 @@ class Reader():
         self._pipeline = None
         self._current_pipeline = None
 
-        print ('in reader erhaltener lang_code  ', self.lang_code)
+        # print ('in reader erhaltener lang_code  ', self.lang_code)
 
         self.voicemanager = VoiceManager(self)
 
         if lang_code == "eo":
             text = convert_text(text)
-            print ('Text nach Konvertierung', text)
+            # print ('Text nach Konvertierung', text)
 
         self.use_piper(text, lang_code, selected_voice, pitch, speed)
 
@@ -73,11 +73,11 @@ class Reader():
             # Flatpak-Systempfad
             Path("/app/share/piper")
         ]
-        print ('voice_name  = ', voice_name)
+        # print ('voice_name  = ', voice_name)
         for base_path in search_paths:
             model_path = base_path / lang_code / f"{voice_name}/{voice_name}.onnx"
             config_path = base_path / lang_code / f"{voice_name}/{voice_name}.onnx.json"
-            print ('Pfade ', model_path, config_path)
+            # print ('Pfade ', model_path, config_path)
             if model_path.exists() and config_path.exists():
                 return str(model_path), str(config_path)
 
@@ -85,7 +85,7 @@ class Reader():
 
     def use_piper(self, text, lang_code, selected_voice, pitch, speed):
         """Hauptmethode für Sprachsynthese"""
-        print(f"Starte Piper-Synthese für: '{text[:20]}...'")
+        # print(f"Starte Piper-Synthese für: '{text[:20]}...'")
 
         # 1. UI sperren und Dialog anzeigen
         GLib.idle_add(self._show_processing_ui)
@@ -124,7 +124,7 @@ class Reader():
                     voice_id = voice['id']
 
             model_path, config_path = self.get_voice_path(lang_code, voice_id)
-            print(f"Verwende Modell: {model_path}")
+            # print(f"Verwende Modell: {model_path}")
 
             if not (os.path.exists(model_path) and os.path.exists(config_path)):
                 print("❌ Modell oder Konfiguration fehlen")

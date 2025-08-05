@@ -12,13 +12,13 @@ class VoiceManager:
             "models"
         )
         os.makedirs(self.voices_dir, exist_ok=True)
-        print ('voices dir   ', self.voices_dir)
+        # print ('voices dir   ', self.voices_dir)
 
     def get_installed_voices(self, lang_code):
         """Gibt installierte Stimmen für eine Sprache zurück"""
         lang_dir = os.path.join(self.voices_dir, lang_code)
         voices = []
-        print ('Stimmenordner der Sprache  ', lang_dir)
+        # print ('Stimmenordner der Sprache  ', lang_dir)
 
         if lang_code == "eo": # wenn die Sprache Esperanto ist kommen die Stimmen aus app/share/piper/eo
             path = "/app/share/piper/eo"
@@ -26,9 +26,9 @@ class VoiceManager:
             for voice_id in os.listdir(path): # die Stimmdateien von eo
 
                 voice_path = os.path.join(path, voice_id)
-                print ('  Stimmpfad  ', voice_path)
+                # print ('  Stimmpfad  ', voice_path)
                 if os.path.isdir(voice_path):  # wenn voice_path ein Ordner ist
-                    print (' ist eine gültige Stimme  ', self._is_valid_voice(voice_path, voice_id))
+                    # print (' ist eine gültige Stimme  ', self._is_valid_voice(voice_path, voice_id))
                     if self._is_valid_voice(voice_path, voice_id):
                         voices.append({
                             'id': voice_id,
@@ -40,7 +40,7 @@ class VoiceManager:
         else:
             if os.path.exists(lang_dir): # z.B. /home/walter/.var/app/im.bernard.Parolu/data/parolu/models/de
                 for voice_id in os.listdir(lang_dir): # die Stimmdateien einer bestimmten Sprache
-                    print ('voice_id = ', voice_id)
+                    # print ('voice_id = ', voice_id)
                     voice_path = os.path.join(lang_dir, voice_id)
                     if os.path.isdir(voice_path):  # wenn voice_path ein Ordner ist
                         if self._is_valid_voice(voice_path, voice_id):
@@ -63,7 +63,7 @@ class VoiceManager:
         """Extrahiert lesbaren Namen aus Voice-ID"""
         # Beispiel: "de_DE-kerstin-low" → "Kerstin (low)"
         parts = voice_id.split('-')
-        print ('Teile der Stimme  ', len(parts), parts)
+        # print ('Teile der Stimme  ', len(parts), parts)
         if len(parts) > 1:
             return f"{parts[1].capitalize()} ({parts[2]})" # hier wird Kerstin (low) zurückgegeben
         return voice_id

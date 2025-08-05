@@ -114,7 +114,7 @@ class ParoluWindow(Adw.ApplicationWindow):
 
         lang_name = self.lang_chooser.get_selected_item().get_string()
         self.lang_code = self.lang_map.get(lang_name, "en")
-        print ('Sprachkodex am Beginn  ', self.lang_code)
+        # print ('Sprachkodex am Beginn  ', self.lang_code)
 
     def show_wait_dialog(self):
         self.wait_dialog = Gtk.Dialog(
@@ -158,20 +158,20 @@ class ParoluWindow(Adw.ApplicationWindow):
         lang_name = self.lang_chooser.get_selected_item().get_string()
         self.lang_code = self.lang_map.get(lang_name, "en")
         self._update_voice_chooser(self.lang_code)
-        print ('gewählte Sprache   ', lang_name)
+        # print ('gewählte Sprache   ', lang_name)
         # Signal wieder verbinden
         self.lang_chooser.connect("notify::selected", self._on_lang_changed)
 
     def _on_lang_changed(self, dropdown, _):
         lang_name = self.lang_chooser.get_selected_item().get_string()
-        print ('neue Sprache angeklickt', lang_name)
+        # print ('neue Sprache angeklickt', lang_name)
         self.lang_code = self.lang_map.get(lang_name, "en")
         self._update_voice_chooser(self.lang_code)
 
     def _on_voice_changed(self, dropdown, _):
         selected = dropdown.get_selected()
         model = dropdown.get_model()
-        print ('$$$$$$$$$$$$$ in on voice changed  ', model)
+        # print ('$$$$$$$$$$$$$ in on voice changed  ', model)
         if selected == model.get_n_items() - 2:  # vorletzte Zeile ausgewählt
             if self.lang_code != "eo":
                 self._show_voice_download_dialog()
@@ -182,13 +182,13 @@ class ParoluWindow(Adw.ApplicationWindow):
     def _update_voice_chooser(self, lang_code):
         """Aktualisiert die Dropdown-Auswahl"""
         voices = self.voicemanager.get_installed_voices(lang_code)
-        print ('lang_code in voice_chooser  ', lang_code)
-        print ('verfügbare voices  ', voices)
+        # print ('lang_code in voice_chooser  ', lang_code)
+        # print ('verfügbare voices  ', voices)
 
         model = Gtk.StringList.new()
         for voice in voices:
             model.append(voice['name'])
-            print ('Namen der Stimme voice[name]  = ', voice['name'])
+            # print ('Namen der Stimme voice[name]  = ', voice['name'])
 
         if lang_code != "eo":  # für Esperanto gibt es aktuell keine Stimmen
             model.append("Stimme herunterladen...")
@@ -328,7 +328,7 @@ class ParoluWindow(Adw.ApplicationWindow):
             response.raise_for_status()  # Wirft Exception bei HTTP-Fehlern
 
             #2. Parse die Markdown-Antwort
-            print ('### jetzt rufe ich aus fetch_available parse_voices auf für  ', self.lang_code)
+            # print ('### jetzt rufe ich aus fetch_available parse_voices auf für  ', self.lang_code)
             voices = self._parse_voices_md(response.text, self.lang_code)
 
             #3. Cache die Stimmen lokal
@@ -373,7 +373,7 @@ class ParoluWindow(Adw.ApplicationWindow):
             # Stimmenname erkennen (z.B. "* paola")
             if line.startswith('* ') and not '(`' in line and not 'http' in line:
                 current_voice = line.split('*')[1].strip()
-                print ('aktuelle Stimme  ', current_voice)
+                # print ('aktuelle Stimme  ', current_voice)
 
             # Qualität und URLs erkennen (z.B. "* medium - [[model](http...)]")
             if current_voice and line.startswith('* ') and 'http' in line:
@@ -391,7 +391,7 @@ class ParoluWindow(Adw.ApplicationWindow):
                 if urls[1].endswith(".json"): # wenn in der confi-Datei nach True .json steht
                     urls[1] = urls[1][:-5]
 
-                print ('---------- urls der Stimme in parse', urls)
+                # print ('---------- urls der Stimme in parse', urls)
                 if urls and len(urls) >= 2:
                     voices.append({
                         'id': f"{lang_code}-{current_voice}-{quality}",
@@ -400,7 +400,7 @@ class ParoluWindow(Adw.ApplicationWindow):
                         'config_url': urls[1],  # Zweite URL ist die Konfig
                         'quality': quality
                     })
-        print ('##### voices aus parse', voices)
+        # print ('##### voices aus parse', voices)
 
         return voices or [{'id': f"{lang_code}_default", 'name': "Standard-Stimme"}]
 
@@ -432,7 +432,7 @@ class ParoluWindow(Adw.ApplicationWindow):
     def _on_voice_selected(self, btn, voice_id, model_url, config_url, dialog):
         """Installiert die ausgewählte Stimme mit Fortschrittsanzeige"""
         lang_code = self.lang_code
-        print(f'Installiere Stimme: {voice_id}, Sprache: {lang_code}')
+        # print(f'Installiere Stimme: {voice_id}, Sprache: {lang_code}')
 
         # UI-Elemente vorbereiten
         btn.set_sensitive(False)
@@ -664,7 +664,7 @@ class ParoluWindow(Adw.ApplicationWindow):
 
     # Abspielen des Texts
     def read_text(self, button):
-        print ('### Audio abspielen   ###')
+        # print ('### Audio abspielen   ###')
         buffer = self.main_text_view.get_buffer()
 
         # Retrieve the iterator at the start of the buffer
@@ -675,16 +675,16 @@ class ParoluWindow(Adw.ApplicationWindow):
         text = buffer.get_text(start, end, False)
 
         engine = 'piper'
-        print(engine)
+        # print(engine)
 
         pitch = self.pitch_chooser.get_value()
-        print('pitch', pitch)
+        # print('pitch', pitch)
 
         speed = self.speed_chooser.get_value()
-        print('speed', speed)
+        # print('speed', speed)
 
         selected_voice = self.voice_chooser.get_selected_item().get_string()
-        print('Stimme', selected_voice)
+        # print('Stimme', selected_voice)
 
         #self.reader = Reader(text, engine, self.lang_code, selected_voice, pitch, speed, window=self)
         print ('is_playing:', self.is_playing)
