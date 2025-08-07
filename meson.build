@@ -11,6 +11,11 @@ python = python_mod.find_installation('python3')
 
 # Installiere Wrapper
 install_data('bin/parolu', install_dir: '/app/bin')
+install_data(
+  'data/icons/hicolor/scalable/actions/im.bernard.Parolu.pitch-symbolic.svg',
+  'data/icons/hicolor/scalable/actions/im.bernard.Parolu.speed-symbolic.svg',
+  install_dir: get_option('prefix') / 'share/icons/hicolor/scalable/actions'
+)
 
 # Installiere alle Python-Quelldateien aus src/
 python.install_sources(

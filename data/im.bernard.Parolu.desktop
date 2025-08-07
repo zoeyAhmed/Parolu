@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Parolu
-Comment=Sprachsynthese mit verschiedenen Sythesizern
+Comment=Sprachsynthese mit piper
 Exec=parolu
 Icon=im.bernard.Parolu
 Terminal=false

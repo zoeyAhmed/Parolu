@@ -81,7 +81,7 @@
                     <property name="spacing">6</property>
                     <child>
                       <object class="GtkImage">
-                        <property name="icon-name">pitch_symbolic</property>
+                        <property name="icon-name">im.bernard.Parolu.pitch-symbolic</property>
                       </object>
                     </child>
                     <child>
@@ -143,7 +143,7 @@
                     <property name="spacing">6</property>
                     <child>
                       <object class="GtkImage">
-                        <property name="icon-name">speed_symbolic</property>
+                        <property name="icon-name">im.bernard.Parolu.speed-symbolic</property>
                       </object>
                     </child>
                     <child>
