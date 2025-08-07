@@ -119,14 +119,29 @@ class ParoluWindow(Adw.ApplicationWindow):
     def show_wait_dialog(self):
         self.wait_dialog = Gtk.Dialog(
             title="Synchronisierung",
-            transient_for=self,  # Korrekt: self ist das Hauptfenster
+            transient_for=self,
             modal=True
         )
+        # Größe des Dialogs festlegen
+        self.wait_dialog.set_default_size(200, 80)
+
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
-        box.append(Gtk.Label(label="Bitte warten..."))
+        # Randabstände hinzufügen
+        box.set_margin_top(12)
+        box.set_margin_bottom(12)
+        box.set_margin_start(12)
+        box.set_margin_end(12)
+
+        # Label mit Ausrichtung
+        label = Gtk.Label(label="Bitte warten...")
+        label.set_halign(Gtk.Align.CENTER)
+        box.append(label)
+
+        # Spinner
         self.spinner = Gtk.Spinner()
         self.spinner.start()
         box.append(self.spinner)
+
         self.wait_dialog.set_child(box)
         self.wait_dialog.show()
 
@@ -687,16 +702,12 @@ class ParoluWindow(Adw.ApplicationWindow):
         # print('Stimme', selected_voice)
 
         #self.reader = Reader(text, engine, self.lang_code, selected_voice, pitch, speed, window=self)
-        print ('is_playing:', self.is_playing)
+        # print ('is_playing:', self.is_playing)
         if self.is_playing:
             self.stop_playback(button)
         else:
             self.start_playback(button, text, engine, self.lang_code, selected_voice, pitch, speed)
 
-    # def _update_play_button(self):
-    #     print( """Sicherer UI-Update über GLib.idle_add""")
-    #     button = self.read_button
-    #     button.set_icon_name ("media-playback-stop-symbolic")
 
     def start_playback(self, button, text, engine, lang_code, selected_voice, pitch, speed):
         """Startet die Wiedergabe und aktualisier t UI"""

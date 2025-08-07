@@ -130,16 +130,16 @@ class Reader():
                 print("❌ Modell oder Konfiguration fehlen")
                 return
 
-            print(f"Starte Synthese mit: {model_path} (Existiert: {os.path.exists(model_path)})")
+            # print(f"Starte Synthese mit: {model_path} (Existiert: {os.path.exists(model_path)})")
 
             self.p = piper.piper_api(model_path, config_path)   # Sythesizer
 
-            lenght_scale = 1/self.speed  # verändert die Geschwindigkeit
+            lenght_scale = 0.8/self.speed  # verändert die Geschwindigkeit
 
             samples = self.p.text_to_audio(text, lenght_scale)
 
             # wav Data erstellen
-            target_rate = pitch*22050   # verändert die Stimmlage
+            target_rate = pitch*19000   # verändert die Stimmlage
             wav_data = self._samples_to_wav(samples, target_rate)
 
             # Temporäre Datei erstellen
