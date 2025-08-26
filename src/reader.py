@@ -9,9 +9,9 @@ from gi.repository import Gst, GLib
 Gst.init(None)
 import array
 import time
-import pyttsx4
+
 import piper
-from gtts import gTTS, lang
+
 import math
 import tempfile
 import io

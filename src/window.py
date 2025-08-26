@@ -23,7 +23,6 @@ from gi.repository import Gtk, Gio, GLib, Gdk
 resource = Gio.Resource.load("/app/share/parolu.gresource")
 Gio.Resource._register(resource)
 
-import pyttsx4
 import os
 import shutil
 import requests
