@@ -27,9 +27,6 @@ python.install_sources(
 # Python & Pybind11
 pybind11_dep = dependency('pybind11', required: true)
 
-# Espeak-ng
-espeak_dep = dependency('', required: false)  # Dummy-Dependency
-
 # Manuelle Suche für Flatpak
 if meson.is_subproject() or get_option('prefix') == '/app'
   message('Flatpak-Build erkannt, verwende manuelle espeak-Konfiguration')
