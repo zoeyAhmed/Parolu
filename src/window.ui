@@ -16,14 +16,14 @@
             <child type="start">
             <object class="GtkButton" id="open_button">
               <property name="icon-name">document-open</property>
-              <property name="tooltip-text">Öffnen einer Text-Datei</property>
+              <property name="tooltip-text" translatable="yes">Öffnen einer Text-Datei</property>
               <property name="action-name">win.open</property>
             </object>
             </child>
             <child>
               <object class="GtkButton" id="save_text_button">
                 <property name="icon-name">document-save</property>
-                <property name="tooltip-text">Speichern des Texts</property>
+                <property name="tooltip-text" translatable="yes">Speichern des Texts</property>
                 <property name="action-name">win.save-as</property>
               </object>
             </child>
@@ -49,7 +49,7 @@
             <child type="start">
               <object class="GtkDropDown" id="lang_chooser">
                 <property name="enable-search">false</property>
-                <property name="tooltip-text">Wählen Sie eine Sprache</property>
+                <property name="tooltip-text" translatable="yes">Wählen Sie eine Sprache</property>
                 <property name="valign">center</property>
                 <signal name="notify::selected" handler="on_lang_changed"/>
                 <property name="model">
@@ -68,14 +68,14 @@
             <child>
               <object class="GtkDropDown" id="voice_chooser">
                 <property name="enable-search">false</property>
-                <property name="tooltip-text">Wählen Sie eine Stimme</property>
+                <property name="tooltip-text" translatable="yes">Wählen Sie eine Stimme</property>
                 <signal name="notify::selected" handler="on_voice_download_selected"/>
               </object>
             </child>
 
             <child>
               <object class="GtkMenuButton">
-                <property name="tooltip-text">Wählen Sie eine Stimmlage</property>
+                <property name="tooltip-text" translatable="yes">Wählen Sie eine Stimmlage</property>
                 <child>
                   <object class="GtkBox">
                     <property name="spacing">6</property>
@@ -137,7 +137,7 @@
 
             <child>
               <object class="GtkMenuButton">
-                <property name="tooltip-text">Wählen Sie eine Geschwindigkeit</property>
+                <property name="tooltip-text" translatable="yes">Wählen Sie eine Geschwindigkeit</property>
                 <child>
                   <object class="GtkBox">
                     <property name="spacing">6</property>
@@ -207,7 +207,7 @@
 
             <child type="end">
               <object class="GtkButton" id="save_button">
-                <property name="tooltip-text">Speichern des Audios</property>
+                <property name="tooltip-text" translatable="yes">Speichern des Audios</property>
                 <property name="icon-name">document-save</property>
               </object>
             </child>

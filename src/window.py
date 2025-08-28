@@ -226,8 +226,8 @@ class ParoluWindow(Adw.ApplicationWindow):
 
         # Custom HeaderBar ohne doppelte Titelleiste
         header_bar = Adw.HeaderBar()
-        title = Adw.WindowTitle(title="Neue Stimme herunterladen",
-                              subtitle="Wählen Sie eine Stimme aus")
+        title = Adw.WindowTitle(_title="Neue Stimme herunterladen",
+                              _subtitle="Wählen Sie eine Stimme aus")
         header_bar.set_title_widget(title)
         main_box.append(header_bar)
 
@@ -258,7 +258,7 @@ class ParoluWindow(Adw.ApplicationWindow):
                 self.download_progress[voice['id']] = progress
 
                 # Installations-Button
-                btn = Gtk.Button(label="Installieren",
+                btn = Gtk.Button(_label="Installieren",
                                css_classes=["suggested-action"])
                 btn.connect('clicked', self._on_voice_selected,
                           voice['id'], voice['model_url'], voice['config_url'], dialog)
@@ -269,7 +269,7 @@ class ParoluWindow(Adw.ApplicationWindow):
                 listbox.append(row)
 
         if listbox.get_first_child() is None:
-            row = Adw.ActionRow(title="Alle Stimmen sind bereits installiert")
+            row = Adw.ActionRow(_title="Alle Stimmen sind bereits installiert")
             listbox.append(row)
 
         scrolled.set_child(listbox)
@@ -292,8 +292,8 @@ class ParoluWindow(Adw.ApplicationWindow):
 
         # Custom HeaderBar ohne doppelte Titelleiste
         header_bar = Adw.HeaderBar()
-        title = Adw.WindowTitle(title="Stimme entfernen",
-                              subtitle="Wählen Sie eine Stimme aus")
+        title = Adw.WindowTitle(_title="Stimme entfernen",
+                              _subtitle="Wählen Sie eine Stimme aus")
         header_bar.set_title_widget(title)
         main_box.append(header_bar)
 
@@ -311,7 +311,7 @@ class ParoluWindow(Adw.ApplicationWindow):
                               margin_end=12)
 
             # Löschen-Button
-            btn = Gtk.Button(label="Löschen",
+            btn = Gtk.Button(_label="Löschen",
                            css_classes=["suggested-action"])
             btn.connect('clicked', self._delete_voice,
                       voice['id'], voice['path'], dialog)
@@ -322,7 +322,7 @@ class ParoluWindow(Adw.ApplicationWindow):
             listbox.append(row)
 
         if listbox.get_first_child() is None:
-            row = Adw.ActionRow(title="Es sind noch keine Stimmen für diese Sprache installiert")
+            row = Adw.ActionRow(_title="Es sind noch keine Stimmen für diese Sprache installiert")
             listbox.append(row)
 
         scrolled.set_child(listbox)
