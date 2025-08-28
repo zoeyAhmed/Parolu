@@ -36,6 +36,9 @@ from .reader import Reader
 
 from .pipervoice import VoiceManager
 
+import gettext   # braucht es, damit Unterstrich übersetzbar bedeutet
+_ = gettext.gettext
+
 display = Gdk.Display.get_default()
 if display:
     icon_theme = Gtk.IconTheme.get_for_display(display)
@@ -205,8 +208,8 @@ class ParoluWindow(Adw.ApplicationWindow):
             # print ('Namen der Stimme voice[name]  = ', voice['name'])
 
         if lang_code != "eo":  # für Esperanto gibt es aktuell keine Stimmen
-            model.append("Stimme herunterladen...")
-            model.append("Stimme entfernen...")
+            model.append(_("Stimme herunterladen..."))
+            model.append(_("Stimme entfernen..."))
 
         self.voice_chooser.set_model(model)
         self.voice_chooser.set_selected(0)   # stellt Auswahlfenster auf die erste Zeile
@@ -226,8 +229,8 @@ class ParoluWindow(Adw.ApplicationWindow):
 
         # Custom HeaderBar ohne doppelte Titelleiste
         header_bar = Adw.HeaderBar()
-        title = Adw.WindowTitle(_title="Neue Stimme herunterladen",
-                              _subtitle="Wählen Sie eine Stimme aus")
+        title = Adw.WindowTitle(title=_("Neue Stimme herunterladen"),
+                              subtitle=_("Wählen Sie eine Stimme aus"))
         header_bar.set_title_widget(title)
         main_box.append(header_bar)
 
@@ -258,7 +261,7 @@ class ParoluWindow(Adw.ApplicationWindow):
                 self.download_progress[voice['id']] = progress
 
                 # Installations-Button
-                btn = Gtk.Button(_label="Installieren",
+                btn = Gtk.Button(label="Installieren",
                                css_classes=["suggested-action"])
                 btn.connect('clicked', self._on_voice_selected,
                           voice['id'], voice['model_url'], voice['config_url'], dialog)
@@ -292,8 +295,8 @@ class ParoluWindow(Adw.ApplicationWindow):
 
         # Custom HeaderBar ohne doppelte Titelleiste
         header_bar = Adw.HeaderBar()
-        title = Adw.WindowTitle(_title="Stimme entfernen",
-                              _subtitle="Wählen Sie eine Stimme aus")
+        title = Adw.WindowTitle(title=_("Stimme entfernen"),
+                              subtitle=_("Wählen Sie eine Stimme aus"))
         header_bar.set_title_widget(title)
         main_box.append(header_bar)
 
@@ -311,7 +314,7 @@ class ParoluWindow(Adw.ApplicationWindow):
                               margin_end=12)
 
             # Löschen-Button
-            btn = Gtk.Button(_label="Löschen",
+            btn = Gtk.Button(label=_("Löschen"),
                            css_classes=["suggested-action"])
             btn.connect('clicked', self._delete_voice,
                       voice['id'], voice['path'], dialog)
@@ -322,7 +325,7 @@ class ParoluWindow(Adw.ApplicationWindow):
             listbox.append(row)
 
         if listbox.get_first_child() is None:
-            row = Adw.ActionRow(_title="Es sind noch keine Stimmen für diese Sprache installiert")
+            row = Adw.ActionRow(title=_("Es sind noch keine Stimmen für diese Sprache installiert"))
             listbox.append(row)
 
         scrolled.set_child(listbox)
