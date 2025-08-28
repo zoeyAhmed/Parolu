@@ -27,30 +27,6 @@ python.install_sources(
 # Python & Pybind11
 pybind11_dep = dependency('pybind11', required: true)
 
-# Manuelle Suche für Flatpak
-if meson.is_subproject() or get_option('prefix') == '/app'
-  message('Flatpak-Build erkannt, verwende manuelle espeak-Konfiguration')
-  espeak_dep = declare_dependency(
-    include_directories: include_directories('/app/include'),
-    link_args: ['-lespeak-ng']
-  )
-else
-  # Normale Systeminstallation
-  espeak_dep = dependency('espeak-ng', required: true)
-endif
-
-# ONNX Runtime (manuell)
-onnx_dep = declare_dependency(
-  include_directories: include_directories('/app/include'),
-  link_args: ['-lonnxruntime']
-)
-
-# piper-phonemize (Header und Linker)
-phonemize_dep = declare_dependency(
-  include_directories: include_directories('/app/include'),
-  link_args: ['-lpiper_phonemize']
-)
-
 # piper (Subproject)
 piper_proj = subproject('piper-src',
     default_options: [
