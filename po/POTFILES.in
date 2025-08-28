@@ -1,3 +1,4 @@
 src/window.ui
 data/im.bernard.Parolu.desktop.in
 data/im.bernard.Parolu.metainfo.xml.in
+src/window.py

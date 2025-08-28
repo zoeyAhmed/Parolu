@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: parolu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-28 18:14+0200\n"
+"POT-Creation-Date: 2025-08-28 18:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -84,4 +84,35 @@ msgstr ""
 
 #: data/im.bernard.Parolu.metainfo.xml.in:35
 msgid "Erste veröffentlichte Version."
+msgstr ""
+
+#. print ('Namen der Stimme voice[name]  = ', voice['name'])
+#. für Esperanto gibt es aktuell keine Stimmen
+#: src/window.py:211
+msgid "Stimme herunterladen..."
+msgstr ""
+
+#: src/window.py:212
+msgid "Stimme entfernen..."
+msgstr ""
+
+#: src/window.py:232
+msgid "Neue Stimme herunterladen"
+msgstr ""
+
+#: src/window.py:233 src/window.py:299
+msgid "Wählen Sie eine Stimme aus"
+msgstr ""
+
+#: src/window.py:298
+msgid "Stimme entfernen"
+msgstr ""
+
+#. Löschen-Button
+#: src/window.py:317
+msgid "Löschen"
+msgstr ""
+
+#: src/window.py:328
+msgid "Es sind noch keine Stimmen für diese Sprache installiert"
 msgstr ""
