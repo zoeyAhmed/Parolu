@@ -208,8 +208,8 @@ class ParoluWindow(Adw.ApplicationWindow):
             # print ('Namen der Stimme voice[name]  = ', voice['name'])
 
         if lang_code != "eo":  # für Esperanto gibt es aktuell keine Stimmen
-            model.append(_("Stimme herunterladen..."))
-            model.append(_("Stimme entfernen..."))
+            model.append(_("Download Voice…"))
+            model.append(_("Delete Voice…"))
 
         self.voice_chooser.set_model(model)
         self.voice_chooser.set_selected(0)   # stellt Auswahlfenster auf die erste Zeile
@@ -229,8 +229,7 @@ class ParoluWindow(Adw.ApplicationWindow):
 
         # Custom HeaderBar ohne doppelte Titelleiste
         header_bar = Adw.HeaderBar()
-        title = Adw.WindowTitle(title=_("Neue Stimme herunterladen"),
-                              subtitle=_("Wählen Sie eine Stimme aus"))
+        title = Adw.WindowTitle(title=_("Download Voices"))
         header_bar.set_title_widget(title)
         main_box.append(header_bar)
 
@@ -261,7 +260,7 @@ class ParoluWindow(Adw.ApplicationWindow):
                 self.download_progress[voice['id']] = progress
 
                 # Installations-Button
-                btn = Gtk.Button(label="Installieren",
+                btn = Gtk.Button(label="Install",
                                css_classes=["suggested-action"])
                 btn.connect('clicked', self._on_voice_selected,
                           voice['id'], voice['model_url'], voice['config_url'], dialog)
@@ -272,7 +271,7 @@ class ParoluWindow(Adw.ApplicationWindow):
                 listbox.append(row)
 
         if listbox.get_first_child() is None:
-            row = Adw.ActionRow(_title="Alle Stimmen sind bereits installiert")
+            row = Adw.ActionRow(_title="All voices are already installed")
             listbox.append(row)
 
         scrolled.set_child(listbox)
@@ -295,8 +294,7 @@ class ParoluWindow(Adw.ApplicationWindow):
 
         # Custom HeaderBar ohne doppelte Titelleiste
         header_bar = Adw.HeaderBar()
-        title = Adw.WindowTitle(title=_("Stimme entfernen"),
-                              subtitle=_("Wählen Sie eine Stimme aus"))
+        title = Adw.WindowTitle(title=_("Remove Voices"))
         header_bar.set_title_widget(title)
         main_box.append(header_bar)
 
@@ -325,7 +323,7 @@ class ParoluWindow(Adw.ApplicationWindow):
             listbox.append(row)
 
         if listbox.get_first_child() is None:
-            row = Adw.ActionRow(title=_("Es sind noch keine Stimmen für diese Sprache installiert"))
+            row = Adw.ActionRow(title=_("There are no installed voices for this language"))
             listbox.append(row)
 
         scrolled.set_child(listbox)
@@ -419,7 +417,7 @@ class ParoluWindow(Adw.ApplicationWindow):
                     })
         # print ('##### voices aus parse', voices)
 
-        return voices or [{'id': f"{lang_code}_default", 'name': "Standard-Stimme"}]
+        return voices or [{'id': f"{lang_code}_default", 'name': "Default Voice"}]
 
     def _load_cached_voices(self, lang_code):
         """Lädt zwischengespeicherte Stimmen falls Online-Laden fehlschlägt"""
@@ -442,7 +440,7 @@ class ParoluWindow(Adw.ApplicationWindow):
         # Fallback-Stimme
         return [{
             'id': f"{lang_code}_default" if lang_code else "default",
-            'name': "Standard-Stimme",
+            'name': "Default Voice",
             'quality': "medium"
         }]
 
@@ -514,17 +512,17 @@ class ParoluWindow(Adw.ApplicationWindow):
         # Bestätigungsdialog
         confirm_dialog = Adw.MessageDialog(
             transient_for=parent_window,
-            heading="Stimme löschen?",
-            body=f"Soll die Stimme '{voice_id}' wirklich dauerhaft gelöscht werden?",
+            heading="Delete Voice?",
+            body=f"Should the voice '{voice_id}' be deleted irreversibly?",
         )
 
-        confirm_dialog.add_response("cancel", "Abbrechen")
-        confirm_dialog.add_response("delete", "Löschen")
+        confirm_dialog.add_response("cancel", "Cancel")
+        confirm_dialog.add_response("delete", "Delete")
         confirm_dialog.set_response_appearance("delete", Adw.ResponseAppearance.DESTRUCTIVE)
 
         # Temporär Button deaktivieren
         btn.set_sensitive(False)
-        btn.set_label("Wird gelöscht...")
+        btn.set_label("Deleting…")
 
         def on_response(dialog, response):
             if response == "delete":
@@ -536,8 +534,8 @@ class ParoluWindow(Adw.ApplicationWindow):
                         # Erfolgsmeldung in neuem Dialog
                         success_dialog = Adw.MessageDialog(
                             transient_for=parent_window,
-                            heading="Stimme gelöscht",
-                            body=f"Die Stimme '{voice_id}' wurde erfolgreich entfernt."
+                            heading="Voice deleted",
+                            body=f"The voice '{voice_id}' was deleted successfully"
                         )
                         success_dialog.add_response("ok", "OK")
                         success_dialog.connect("response", lambda *_: (
@@ -547,24 +545,24 @@ class ParoluWindow(Adw.ApplicationWindow):
                         success_dialog.present()
 
                     else:
-                        raise Exception("Stimmen-Pfad existiert nicht")
+                        raise Exception("Voice path does not exist")
 
                 except Exception as e:
                     print(f"Löschfehler: {e}")
-                    btn.set_label("Erneut versuchen")
+                    btn.set_label("Try again")
                     btn.set_sensitive(True)
 
                     # Fehlermeldung in neuem Dialog
                     error_dialog = Adw.MessageDialog(
                         transient_for=parent_window,
-                        heading="Löschen fehlgeschlagen",
+                        heading="Deletion failed",
                         body=f"Fehler: {str(e)}"
                     )
                     error_dialog.add_response("ok", "OK")
                     error_dialog.present()
             else:
                 # Bei Abbruch Button zurücksetzen
-                btn.set_label("Löschen")
+                btn.set_label("Delete")
                 btn.set_sensitive(True)
 
         confirm_dialog.connect("response", on_response)

@@ -7,6 +7,6 @@ Bei den anderen Sprachen muss vorher mindestens eine Stimme heruntergeladen werd
 
 ## Setting up translations
 
-1. Create `/build` directory
+1. Create `/build` directory with `meson setup builddir`
 2. `cd /build`
 3. `ninja parolu-pot`
