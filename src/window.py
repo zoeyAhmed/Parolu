@@ -120,7 +120,7 @@ class ParoluWindow(Adw.ApplicationWindow):
 
     def show_wait_dialog(self):
         self.wait_dialog = Gtk.Dialog(
-            title="Synchronisierung",
+           title= _("Synchronizing"),
             transient_for=self,
             modal=True
         )
@@ -135,7 +135,7 @@ class ParoluWindow(Adw.ApplicationWindow):
         box.set_margin_end(12)
 
         # Label mit Ausrichtung
-        label = Gtk.Label(label="Bitte warten...")
+        label = Gtk.Label(label=_("Please wait..."))
         label.set_halign(Gtk.Align.CENTER)
         box.append(label)
 
@@ -312,7 +312,7 @@ class ParoluWindow(Adw.ApplicationWindow):
                               margin_end=12)
 
             # Löschen-Button
-            btn = Gtk.Button(label=_("Löschen"),
+            btn = Gtk.Button(label=_("Delete"),
                            css_classes=["suggested-action"])
             btn.connect('clicked', self._delete_voice,
                       voice['id'], voice['path'], dialog)
@@ -451,7 +451,7 @@ class ParoluWindow(Adw.ApplicationWindow):
 
         # UI-Elemente vorbereiten
         btn.set_sensitive(False)
-        btn.set_label("Wird installiert...")
+        btn.set_label(_("Installing..."))
 
         # Fortschrittsanzeige holen (aus self.download_progress)
         progress = self.download_progress.get(voice_id)
@@ -473,10 +473,10 @@ class ParoluWindow(Adw.ApplicationWindow):
 
         def on_complete():
             if progress:
-                GLib.idle_add(progress.set_text, "Installation abgeschlossen")
+                GLib.idle_add(progress.set_text, _("Installation completed"))
                 GLib.idle_add(progress.set_fraction, 1.0)
 
-            GLib.idle_add(btn.set_label, "Installiert")
+            GLib.idle_add(btn.set_label, _("Installed"))
             GLib.idle_add(btn.get_style_context().remove_class, "suggested-action")
             GLib.idle_add(self._update_voice_chooser, lang_code)
 
