@@ -28,7 +28,9 @@
 			"name": "python3-requests",
 			"buildsystem": "simple",
 			"build-commands": [
-				"pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"requests\" --no-build-isolation"
+				"pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"requests\" --no-build-isolation",
+				"mkdir -p /app/include/python3.12",
+        "cp -r /usr/include/python3.12/* /app/include/python3.12/"
 			],
 			"sources": [
 				{
@@ -99,9 +101,7 @@
         "cp -v lib/libonnxruntime.so* /app/lib/",
         "ln -sf /app/lib/libonnxruntime.so.1.16.1 /app/lib/libonnxruntime.so",
         "mkdir -p /app/include/onnxruntime",
-        "cp -v include/*.h /app/include/",
-        "mkdir -p /app/include/python3.12",
-        "cp -r /usr/include/python3.12/* /app/include/python3.12/"
+        "cp -v include/*.h /app/include/"
       ],
       "sources": [
         {
