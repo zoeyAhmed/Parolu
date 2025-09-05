@@ -30,8 +30,6 @@ import json
 import time
 import threading
 
-from gtts import gTTS, lang
-
 from .reader import Reader
 
 from .pipervoice import VoiceManager
