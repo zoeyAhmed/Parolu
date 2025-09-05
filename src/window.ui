@@ -200,7 +200,7 @@
             <child>
               <object class="GtkButton" id="read_button">
                 <property name="icon-name">media-playback-start-symbolic</property>
-                <property name="tooltip-text">Lesen des Texts</property>
+                <property name="tooltip-text" translatable="yes">Read Text</property>
                 <signal name="clicked" handler="read_text" swapped="no"/>
               </object>
             </child>

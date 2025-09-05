@@ -2,28 +2,74 @@
 # Copyright (C) 2025 THE parolu'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the parolu package.
 # Automatically generated, 2025.
+# Tobias Bernard <tbernard@gnome.org>, 2025.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: parolu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-11 14:27+0200\n"
-"PO-Revision-Date: 2025-08-11 14:27+0200\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"POT-Creation-Date: 2025-09-05 14:37+0200\n"
+"PO-Revision-Date: 2025-09-05 14:37+0200\n"
+"Last-Translator: Tobias Bernard <tbernard@gnome.org>\n"
+"Language-Team: German\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Gtranslator 48.0\n"
+
+#: src/window.ui:19
+msgid "Open Text File"
+msgstr "Textdatei öffnen"
+
+#: src/window.ui:26
+msgid "Save Text to File"
+msgstr "Textdatei speichern"
+
+#: src/window.ui:34
+msgid "Menu"
+msgstr "Menü"
+
+#: src/window.ui:52
+msgid "Choose Language"
+msgstr "Sprache wählen"
+
+#: src/window.ui:71
+msgid "Choose Voice"
+msgstr "Stimme wählen"
+
+#: src/window.ui:78
+msgid "Adjust Pitch"
+msgstr "Stimmlage anpassen"
+
+#: src/window.ui:140
+msgid "Adjust Speed"
+msgstr "Geschwindigkeit anpassen"
+
+#: src/window.ui:203
+msgid "Read Text"
+msgstr "Text vorlesen"
+
+#: src/window.ui:210
+msgid "Save Audio to File"
+msgstr "Audiodatei speichern"
+
+#: src/window.ui:239
+msgid "_Keyboard Shortcuts"
+msgstr "Tastenkürzel"
+
+#: src/window.ui:243
+msgid "_About Parolu"
+msgstr "Über Parolu"
 
 #: data/im.bernard.Parolu.desktop.in:3 data/im.bernard.Parolu.metainfo.xml.in:4
 msgid "Parolu"
 msgstr ""
 
 #: data/im.bernard.Parolu.metainfo.xml.in:5
-msgid "Sprachsynthese mir verschiedenen Synthesizern"
-msgstr ""
+msgid "Read text out aloud"
+msgstr "Text vorlesen"
 
 #: data/im.bernard.Parolu.metainfo.xml.in:9
 msgid "Bernard"
@@ -31,29 +77,71 @@ msgstr ""
 
 #: data/im.bernard.Parolu.metainfo.xml.in:12
 msgid ""
-"Parolu ist ein benutzerfreundliches Frontend für die Sprachsynthese mit "
-"Piper. Es bietet natürlich klingende Sprachausgabe für viele Sprachen – "
-"komplett offline und datenschutzfreundlich."
+"Parolu allows you to generate audio from text using different voices. This "
+"happens exclusively offline and on your device, which is great for privacy."
 msgstr ""
+"Parlu erlaubt es, aus einem geschriebenen Text Audio zu generieren. "
+"Verschiedene Stimmen in mehreren Sprachen stehen zur Auswahl. Dies passiert "
+"ausschließlich offline, um deine Privatsphäre zu schützen."
 
 #: data/im.bernard.Parolu.metainfo.xml.in:16
 msgid ""
-"Ideal für Screenreader, Sprachassistenten, Barrierefreiheit oder "
-"experimentelle Anwendungen."
+"It's built on the Piper synthesizer library and supports voices for "
+"different languages including German, Italian, French, Spanish, and even "
+"Esperanto!"
 msgstr ""
+"Die Anwendung verwendet die Piper Bibliothek zur Sprachythese, und "
+"unterstützt verschieden Sprachen, z.B. Deutsch, Italienisch, Französisch, "
+"Spanisch, und sogar Esperanto!"
 
-#: data/im.bernard.Parolu.metainfo.xml.in:35
-msgid "Erste veröffentlichte Version."
-msgstr ""
+#: data/im.bernard.Parolu.metainfo.xml.in:36
+msgid "Initial release"
+msgstr "Erste Version"
 
-#: src/window.ui:37
-msgid "Menu"
-msgstr ""
+#: src/window.py:123
+msgid "Synchronizing"
+msgstr "Synchronisierung"
 
-#: src/window.ui:242
-msgid "_Keyboard Shortcuts"
-msgstr ""
+#. Label mit Ausrichtung
+#: src/window.py:138
+msgid "Please wait..."
+msgstr "Bitte warten..."
 
-#: src/window.ui:246
-msgid "_About Parolu"
-msgstr ""
+#. print ('Namen der Stimme voice[name]  = ', voice['name'])
+#. für Esperanto gibt es aktuell keine Stimmen
+#: src/window.py:211
+msgid "Download Voice…"
+msgstr "Stimme herunterladen..."
+
+#: src/window.py:212
+msgid "Delete Voice…"
+msgstr "Stimme löschen..."
+
+#: src/window.py:232
+msgid "Download Voices"
+msgstr "Stimmen herunterladen"
+
+#: src/window.py:297
+msgid "Remove Voices"
+msgstr "Stimmen entfernen"
+
+#. Löschen-Button
+#: src/window.py:315
+msgid "Delete"
+msgstr "Löschen"
+
+#: src/window.py:326
+msgid "There are no installed voices for this language"
+msgstr "Keine installierten Stimmen für diese Sprache"
+
+#: src/window.py:454
+msgid "Installing..."
+msgstr "Installiert..."
+
+#: src/window.py:476
+msgid "Installation completed"
+msgstr "Installation vollständig"
+
+#: src/window.py:479
+msgid "Installed"
+msgstr "Installiert"
