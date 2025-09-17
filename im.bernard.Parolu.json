@@ -300,22 +300,6 @@
             ]
         },
         {
-            "name": "gst-plugins",
-            "buildsystem": "simple",
-            "build-commands": [
-                "mkdir -p /app/lib/gstreamer-1.0",
-                "cp /usr/lib/x86_64-linux-gnu/gstreamer-1.0/libgstcoreelements.so /app/lib/gstreamer-1.0/"
-            ],
-            "sources": [
-                {
-                    "type": "shell",
-                    "commands": [
-                        "echo 'Using system GStreamer plugins'"
-                    ]
-                }
-            ]
-        },
-        {
             "name": "parolu",
             "builddir": true,
             "buildsystem": "meson",
