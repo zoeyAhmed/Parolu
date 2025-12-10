@@ -25,28 +25,7 @@
     ],
     "modules": [
         "python3-requirements.json",
-        {
-            "name": "numpy",
-            "buildsystem": "simple",
-            "build-commands": [
-                "pip3 install --prefix=/app numpy"
-            ],
-            "build-options": {
-                "env": {
-                    "PIP_DISABLE_PIP_VERSION_CHECK": "1",
-                    "PIP_NO_CACHE_DIR": "off"
-                },
-                "build-args": [
-                    "--share=network"
-                ]
-            },
-            "sources": [
-                {
-                    "type": "script",
-                    "commands": []
-                }
-            ]
-        },
+        "python3-numpy.json",
         {
             "name": "espeak",
             "buildsystem": "autotools",
